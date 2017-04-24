@@ -1,0 +1,94 @@
+#include <Servo.h>
+#define echopin_C 9 // echo pin
+#define trigpin_C 8 // Trigger pin
+
+int maximumRange = 30;
+int IR_Left = 2;
+int IR_Right = 3;
+int L, R;
+long duration_C, distance_C;
+Servo myservo;
+void setup()
+{
+    myservo.attach(10);
+    myservo.write(33); // Initialization
+    delay(100);
+    // Serial.begin (9600);
+
+    pinMode(trigpin_C, OUTPUT);
+    pinMode(echopin_C, INPUT);
+    pinMode(IR_Left, INPUT);
+    pinMode(IR_Right, INPUT);
+    pinMode(4, OUTPUT);
+    pinMode(5, OUTPUT);
+    pinMode(6, OUTPUT);
+    pinMode(7, OUTPUT);
+}
+
+void loop()
+{
+    L = digitalRead(IR_Left);
+    R = digitalRead(IR_Right);
+    {
+        digitalWrite(trigpin_C, LOW);
+        delayMicroseconds(2);
+        digitalWrite(trigpin_C, HIGH);
+        delayMicroseconds(10);
+        duration_C = pulseIn(echopin_C, HIGH);
+
+        distance_C = duration_C / 58.2;
+
+        // delay (50);
+        // Serial.println(distance_C);
+    }
+    if (distance_C > 30) {
+        myservo.write(33);
+        delay(100);
+        digitalWrite(4, HIGH);
+        digitalWrite(5, LOW);
+        digitalWrite(6, HIGH);
+        digitalWrite(7, LOW);
+    }
+
+    if (R == HIGH) {
+        myservo.write(3);
+        digitalWrite(4, HIGH);
+        digitalWrite(5, LOW);
+        digitalWrite(6, HIGH);
+        digitalWrite(7, LOW);
+        delay(1000);
+    }
+    if (L == HIGH) {
+        myservo.write(63);
+        digitalWrite(4, HIGH);
+        digitalWrite(5, LOW);
+        digitalWrite(6, HIGH);
+        digitalWrite(7, LOW);
+        delay(1000);
+    }
+    else if (distance_C > 20 && distance_C <= 30) {
+        myservo.write(63);
+        delay(100);
+        digitalWrite(4, HIGH);
+        digitalWrite(5, LOW);
+        digitalWrite(6, HIGH);
+        digitalWrite(7, LOW);
+        delay(1500);
+    }
+    else if (distance_C > 10 && distance_C < 20) {
+        myservo.write(3);
+        delay(100);
+        digitalWrite(4, LOW);
+        digitalWrite(5, HIGH);
+        digitalWrite(6, LOW);
+        digitalWrite(7, HIGH);
+        delay(2000);
+    }
+    else if (distance_C < 10) {
+        digitalWrite(4, HIGH);
+        digitalWrite(5, HIGH);
+        digitalWrite(6, HIGH);
+        digitalWrite(7, HIGH);
+        delay(500);
+    }
+}
